@@ -1,11 +1,12 @@
-
 '''
 Python Wrapper for getdrip https://www.getdrip.com/
 Nishant Nawarkhede
 nishant.nawarkhede@gmail.com
+MIT License
 '''
-
+from __future__ import unicode_literals
 import requests
+#from requests.auth import HTTPBasicAuth
 import json
 
 
@@ -18,22 +19,39 @@ class AccountIDNotFound(Exception):
 
 
 class GetDripAPI(object):
-    def __init__(self, **kwrds):
-
-        if not 'token' in kwrds.keys():
-            raise TokenNotFoundException('Please provide token.')
-
-        if not 'account_id' in kwrds.keys():
+    def __init__(self, token=None, account_id=None, api_key=None):
+        #if not token:
+        #    raise TokenNotFoundException('Please provide token.')
+        if not account_id:
             raise AccountIDNotFound('Please provide account id')
-
-        self.token = kwrds['token']
-        self.account_id = kwrds['account_id']
+        if api_key:
+            self.auth = 'basic'
+            self.user_passwd = (api_key, '')
+        elif token:
+            self.auth = 'auth_header'
+            self.token = token
+        self.account_id = account_id
         self.api_url = 'https://api.getdrip.com/v2'
-        self.headers = {'Authorization': 'Bearer %s' % (self.token), 'Content-Type': 'application/vnd.api+json'}
+        self.headers = {}
+        #self.headers['Authorizion'] = 'Bearer %s' % self.token
+        #self.headers['User-Agent'] = 'Drip Python'
+        self.headers['Content-Type'] = 'application/vnd.api+json'
+        #self.headers['Accept'] = 'application/json'
+        self.headers['Accept'] = '*/*'
+
+    def api_get(self, url):
+        if self.auth == 'auth_header':
+            response = requests.get(url, headers=self.headers)
+        elif self.auth == 'basic':
+            response = requests.get(url, auth=self.user_passwd)
+        return response.status_code, response.json()
 
     def fetch_all_campaign(self):
         url = '%s/%s/campaigns/' % (self.api_url, self.account_id)
-        response = requests.get(url, headers=self.headers)
+        if self.auth == 'auth_header':
+            response = requests.get(url, headers=self.headers)
+        elif self.auth == 'basic':
+            response = requests.get(url, auth=self.user_passwd)
         return response.status_code, response.json()
 
     def fetch_campaign(self, campaign_id):
@@ -42,12 +60,13 @@ class GetDripAPI(object):
         return response.status_code, response.json()
 
     def fetch_accounts(self):
-        url =  '%s/accounts'%(self.api_url)
+        url = '%s/accounts'%(self.api_url)
         response = requests.get(url, headers=self.headers)
         return response.status_code, response.json()
 
     def create_or_update_subscriber(self, payload):
         url = '%s/%s/subscribers' % (self.api_url, self.account_id)
+        print url
         response = requests.post(url, headers=self.headers, data=json.dumps(payload))
         return response.status_code, response.json()
 
