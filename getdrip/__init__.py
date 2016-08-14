@@ -50,13 +50,21 @@ class GetDripAPI(object):
                 response = requests.post(url, headers=self.headers)
         elif self.auth == 'basic':
             if payload:
-                response = requests.post(url, headers=self.headers, auth=self.user_passwd)
-            else:
                 response = requests.post(url, headers=self.headers, auth=self.user_passwd,
                                          data=json.dumps(payload))
+            else:
+                response = requests.post(url, headers=self.headers, auth=self.user_passwd)
         return response.status_code, response.json()
 
+    def api_delete(self, url):
+        if self.auth == 'auth_header':
+            response = requests.delete(url, headers=self.headers)
+        elif self.auth == 'basic':
+            response = requests.get(url, headers=self.headers, auth=self.user_passwd)
+        return response.status_code
+
     def fetch_all_campaign(self):
+        """List campaigns."""
         url = '%s/%s/campaigns/' % (self.api_url, self.account_id)
         return self.api_get(url)
 
@@ -81,6 +89,7 @@ class GetDripAPI(object):
         return self.api_get(url)
 
     def subscribe_subscriber(self, campaign_id, payload):
+        """Subscribe a subscriber to a campaign."""
         url = '%s/%s/campaigns/%s/subscribers' % (self.api_url, self.account_id, campaign_id)
         return self.api_post(url, payload=payload)
 
@@ -90,8 +99,7 @@ class GetDripAPI(object):
 
     def delete_subscriber(self, subscriber_id):
         url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, subscriber_id)
-        response = requests.delete(url, headers=self.headers)
-        return response.status_code
+        return requests.api_delete(url)
 
     def activate_campaign(self, campaign_id):
         url = '%s/%s/campaigns/%s/activate' % (self.api_url, self.account_id, campaign_id)
@@ -113,8 +121,7 @@ class GetDripAPI(object):
 
     def untag_a_subscriber(self, email, tag):
         url = '%s/%s/subscribers/%s/tags/%s' % (self.api_url, self.account_id, email, tag)
-        response = requests.delete(url, headers=self.headers)
-        return response.status_code
+        return requests.api_delete(url)
 
     def fetch_a_form(self, form_id):
         url = '%s/%s/forms/%s' % (self.api_url, self.account_id, form_id)
