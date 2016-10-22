@@ -101,6 +101,11 @@ class GetDripAPI(object):
         url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, subscriber_id)
         return requests.api_delete(url)
 
+    def campaign_subscriber(self, subscriber_id):
+        """GET /:account_id/subscribers/:subscriber_id/campaign_subscriptions"""
+        url = '%s/%s/subscribers/%s/campaign_subscriptions' % (self.api_url, self.account_id, subscriber_id)
+        return self.api_get(url)
+
     def activate_campaign(self, campaign_id):
         url = '%s/%s/campaigns/%s/activate' % (self.api_url, self.account_id, campaign_id)
         status_code, _ = self.api_post(url, payload=payload)
