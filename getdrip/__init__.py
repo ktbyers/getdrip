@@ -119,7 +119,7 @@ class GetDripAPI(object):
         status_code, _ = self.api_post(url, payload=payload)
         return status_code
 
-    def fetch_everyone_sucbscribed_to_campaign(self, campaign_id):
+    def fetch_everyone_subscribed_to_campaign(self, campaign_id):
         url = '%s/%s/campaigns/%s/subscribers' % (self.api_url, self.account_id, campaign_id)
         return self.api_get(url)
 
