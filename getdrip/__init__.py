@@ -93,8 +93,11 @@ class GetDripAPI(object):
         url = '%s/%s/campaigns/%s/subscribers' % (self.api_url, self.account_id, campaign_id)
         return self.api_post(url, payload=payload)
 
-    def list_of_all_subscribers(self):
-        url = '%s/%s/subscribers' % (self.api_url, self.account_id)
+    def list_of_all_subscribers(self, page=None):
+        if not page:
+            url = '%s/%s/subscribers' % (self.api_url, self.account_id)
+        else:
+            url = '%s/%s/subscribers?page=%s' % (self.api_url, self.account_id, str(page))
         return self.api_get(url)
 
     def delete_subscriber(self, subscriber_id):
