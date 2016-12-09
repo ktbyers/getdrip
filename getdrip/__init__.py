@@ -1,10 +1,9 @@
 '''
 Python Wrapper for getdrip https://www.getdrip.com/
-Nishant Nawarkhede
-nishant.nawarkhede@gmail.com
 MIT License
 '''
 from __future__ import unicode_literals
+from __future__ import print_function
 import requests
 import json
 
@@ -106,17 +105,18 @@ class GetDripAPI(object):
 
     def campaign_subscriber(self, subscriber_id):
         """GET /:account_id/subscribers/:subscriber_id/campaign_subscriptions"""
-        url = '%s/%s/subscribers/%s/campaign_subscriptions' % (self.api_url, self.account_id, subscriber_id)
+        url = '%s/%s/subscribers/%s/campaign_subscriptions' % (self.api_url, self.account_id,
+                                                               subscriber_id)
         return self.api_get(url)
 
     def activate_campaign(self, campaign_id):
         url = '%s/%s/campaigns/%s/activate' % (self.api_url, self.account_id, campaign_id)
-        status_code, _ = self.api_post(url, payload=payload)
+        status_code, _ = self.api_post(url)
         return status_code
 
     def pause_campaign(self, campaign_id):
         url = '%s/%s/campaigns/%s/pause' % (self.api_url, self.account_id, campaign_id)
-        status_code, _ = self.api_post(url, payload=payload)
+        status_code, _ = self.api_post(url)
         return status_code
 
     def fetch_everyone_subscribed_to_campaign(self, campaign_id):
