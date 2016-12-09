@@ -1,3 +1,4 @@
+setup.cfg
 setup.py
 getdrip/__init__.py
 getdrip.egg-info/PKG-INFO

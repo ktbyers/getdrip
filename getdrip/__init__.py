@@ -7,6 +7,8 @@ from __future__ import print_function
 import requests
 import json
 
+__version__ = '1.3.0'
+
 
 class TokenNotFoundException(Exception):
     pass
