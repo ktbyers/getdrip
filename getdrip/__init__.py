@@ -61,7 +61,7 @@ class GetDripAPI(object):
         if self.auth == 'auth_header':
             response = requests.delete(url, headers=self.headers)
         elif self.auth == 'basic':
-            response = requests.get(url, headers=self.headers, auth=self.user_passwd)
+            response = requests.delete(url, headers=self.headers, auth=self.user_passwd)
         return response.status_code
 
     def fetch_all_campaign(self):
@@ -103,7 +103,7 @@ class GetDripAPI(object):
 
     def delete_subscriber(self, subscriber_id):
         url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, subscriber_id)
-        return requests.api_delete(url)
+        return self.api_delete(url)
 
     def campaign_subscriber(self, subscriber_id):
         """GET /:account_id/subscribers/:subscriber_id/campaign_subscriptions"""
@@ -131,7 +131,7 @@ class GetDripAPI(object):
 
     def untag_a_subscriber(self, email, tag):
         url = '%s/%s/subscribers/%s/tags/%s' % (self.api_url, self.account_id, email, tag)
-        return requests.api_delete(url)
+        return self.api_delete(url)
 
     def fetch_a_form(self, form_id):
         url = '%s/%s/forms/%s' % (self.api_url, self.account_id, form_id)
