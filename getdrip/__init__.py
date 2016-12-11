@@ -85,8 +85,13 @@ class GetDripAPI(object):
         url = '%s/%s/subscribers/batches' % (self.api_url, self.account_id)
         return self.api_post(url, payload=payload)
 
-    def fetch_subscriber(self, subscriber_id):
-        url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, subscriber_id)
+    def fetch_subscriber(self, subscriber_id=None, email=None):
+        if subscriber_id:
+            url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, subscriber_id)
+        elif email:
+            url = '%s/%s/subscribers/%s' % (self.api_url, self.account_id, email)
+        else:
+            raise ValueError("Neither subscriber ID nor email-address specified")
         return self.api_get(url)
 
     def subscribe_subscriber(self, campaign_id, payload):
