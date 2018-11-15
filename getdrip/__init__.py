@@ -7,7 +7,7 @@ from __future__ import print_function
 import requests
 import json
 
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 
 class TokenNotFoundException(Exception):
@@ -57,6 +57,16 @@ class GetDripAPI(object):
                 response = requests.post(url, headers=self.headers, auth=self.user_passwd)
         return response.status_code, response.json()
 
+    def api_post_params(self, url, params=None):
+        if params is None:
+            params = {}
+        if self.auth == 'auth_header':
+            response = requests.post(url, headers=self.headers, params=params)
+        elif self.auth == 'basic':
+            response = requests.post(url, headers=self.headers, auth=self.user_passwd,
+                                     params=params)
+        return response.status_code, response.json()
+
     def api_delete(self, url):
         if self.auth == 'auth_header':
             response = requests.delete(url, headers=self.headers)
@@ -93,6 +103,21 @@ class GetDripAPI(object):
         else:
             raise ValueError("Neither subscriber ID nor email-address specified")
         return self.api_get(url)
+
+    def remove_subscriber_from_campaign(self, email_address, campaign_id):
+        """
+        Remove subscriber from campaign:
+
+        POST /:account_id/subscribers/:id_or_email/remove
+
+        campaign_id is added to URL: remove?campaign_id=CAMPAIGN_ID
+        """
+        url = '%s/%s/subscribers/%s/remove' % (self.api_url, self.account_id,
+                                               email_address)
+        params = {
+            "campaign_id": campaign_id,
+        }
+        return self.api_post_params(url, params=params)
 
     def subscribe_subscriber(self, campaign_id, payload):
         """Subscribe a subscriber to a campaign."""
